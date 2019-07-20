@@ -4,6 +4,7 @@ import login from '../views/login'
 import home from '../views/home'
 import welcome from '../views/home/welcome'
 import users from '../views/home/users'
+import rights from '../views/home/power/rights'
 
 Vue.use(Router)
 
@@ -27,6 +28,10 @@ const router = new Router({
         {
           path: '/users',
           component: users
+        },
+        {
+          path: '/rights',
+          component: rights
         }
       ]
     }
