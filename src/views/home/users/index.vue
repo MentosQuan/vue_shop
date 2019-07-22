@@ -39,8 +39,8 @@
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" :id="scope.row.id" @click="showEditDialog(scope.row.id)"></el-button>
             <el-button type="danger" icon="el-icon-delete" :id="scope.row.id" @click="deleteUser(scope.row.id)"></el-button>
-            <el-tooltip class="item" effect="dark" content="设置" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting">
+            <el-tooltip class="item" effect="dark" content="权限设置" placement="top" :enterable="false">
+              <el-button type="warning" icon="el-icon-setting" @click="changeRight(scope.row)">
               </el-button>
             </el-tooltip>
           </template>
@@ -93,6 +93,23 @@
       <span slot="footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="editUsers(editForm.id)">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改权限 -->
+    <el-dialog title="提示" :visible.sync="rightsDialog" width="50%">
+      <div>
+        <p>当前的用户：{{ userInfo.username }}</p>
+        <p>当前的角色：{{ userInfo.role_name }}</p>
+        <p>分配新角色：
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option v-for="item in rolesList" :key="item.id" :label="item.roleName" :value="item.id">
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer">
+        <el-button >取 消</el-button>
+        <el-button type="primary">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -190,7 +207,12 @@
         // 控制修改用户信息弹出框的显示隐藏
         editDialogVisible: false,
         // 修改用户信息的表单数据
-        editForm: {}
+        editForm: {},
+        // 修改权限弹出框显示隐藏
+        rightsDialog: false,
+        userInfo: {},
+        rolesList: [],
+        selectedRoleId: ''
       }
     },
     created() {
@@ -208,7 +230,11 @@
         } = await this.$http.get('users', {
           params: this.queryInfo
         })
-        if (meta.status !== 200) return this.$message.error(meta.msg)
+        if (meta.status !== 200) return this.$message({
+            message: meta.msg,
+            center: true,
+            type: 'error'
+          })
         this.users = data.users
         this.total = data.total
       },
@@ -346,8 +372,20 @@
             center: true
           });
         });
+      },
+      // 点击显示权限分配弹出框
+      async changeRight(row) {
+        this.userInfo = row
+        this.rightsDialog = true
+        const { data: { data, meta } } = await this.$http.get('roles')
+        if (meta.status !== 200) {
+          return this.$message.error('获取角色列表失败！')
+        }
+        console.log(data)
+        this.rolesList = data
+        console.log(this.rolesList)
+      },
       }
-    },
   }
 </script>
 
