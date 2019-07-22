@@ -96,7 +96,7 @@
       </span>
     </el-dialog>
     <!-- 修改权限 -->
-    <el-dialog title="提示" :visible.sync="rightsDialog" width="50%">
+    <el-dialog title="提示" :visible.sync="rightsDialog" width="50%" @close="setRoleDialogClosed">
       <div>
         <p>当前的用户：{{ userInfo.username }}</p>
         <p>当前的角色：{{ userInfo.role_name }}</p>
@@ -108,8 +108,8 @@
         </p>
       </div>
       <span slot="footer">
-        <el-button >取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="rightsDialog = false">取 消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -379,12 +379,51 @@
         this.rightsDialog = true
         const { data: { data, meta } } = await this.$http.get('roles')
         if (meta.status !== 200) {
-          return this.$message.error('获取角色列表失败！')
+          return this.$message({
+          message: meta.msg,
+          center: true,
+          type: 'error'
+        })
         }
-        console.log(data)
         this.rolesList = data
-        console.log(this.rolesList)
       },
+      // 点击按钮，分配角色
+      async saveRoleInfo() {
+        if (!this.selectedRoleId) {
+          return this.$message({
+          message: "请选择要分配的角色",
+          center: true,
+          type: 'error'
+        })
+        }
+      
+        const { data: res } = await this.$http.put(
+          `users/${this.userInfo.id}/role`,
+          {
+            rid: this.selectedRoleId
+          }
+        )
+      
+        if (res.meta.status !== 200) {
+          return this.$message({
+          message: "分配角色失败",
+          center: true,
+          type: 'error'
+        })
+        }
+        this.$message({
+          message: "分配角色成功",
+          center: true,
+          type: 'success'
+        })
+        this.getUsers()
+        this.rightsDialog = false
+      },
+      // 监听分配角色对话框的关闭事件
+      setRoleDialogClosed() {
+        this.selectedRoleId = ''
+        this.userInfo = {}
+      }
       }
   }
 </script>

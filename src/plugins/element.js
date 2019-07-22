@@ -26,7 +26,8 @@ import {
   Dialog,
   Tag,
   Tree,
-  Select
+  Select,
+  Option
 } from 'element-ui'
 
 Vue.use(Button)
@@ -54,6 +55,7 @@ Vue.use(Button)
   .use(Tag)
   .use(Tree)
   .use(Select)
+  .use(Option)
 
 
 
