@@ -6,6 +6,8 @@ import welcome from '../views/home/welcome'
 import users from '../views/home/users'
 import rights from '../views/home/power/rights'
 import roles from '../views/home/power/roles'
+import categories from '../views/home/goods/categories'
+import params from '../views/home/goods/params'
 
 Vue.use(Router)
 
@@ -37,6 +39,14 @@ const router = new Router({
         {
           path: '/roles',
           component: roles
+        },
+        {
+          path: '/categories',
+          component: categories
+        },
+        {
+          path: '/params',
+          component: params
         }
       ]
     }
