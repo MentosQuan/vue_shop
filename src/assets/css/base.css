@@ -12,3 +12,9 @@ body,
 .el-table {
   margin: 15px 0;
 }
+.el-pagination {
+  margin-top: 15px;
+}
+.el-steps {
+  margin: 15px 0;
+}
